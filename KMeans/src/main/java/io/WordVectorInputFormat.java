@@ -12,12 +12,7 @@ import org.apache.hadoop.mapred.TextInputFormat;
 
 public class WordVectorInputFormat extends TextInputFormat {
 
-	@Override
-	public RecordReader<LongWritable, Text> getRecordReader(InputSplit genericSplit, JobConf job, Reporter reporter)
-			throws IOException {
-		// TODO Auto-generated method stub
-		return super.getRecordReader(genericSplit, job, reporter);
-	}
+	
 
 	
 	
