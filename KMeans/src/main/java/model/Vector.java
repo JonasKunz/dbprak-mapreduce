@@ -1,29 +1,33 @@
 package model;
 
-public class Vector {
-	private float[] vectorPoint;
+import org.apache.commons.math.FunctionEvaluationException;
+import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.linear.ArrayRealVector;
+import org.apache.commons.math.linear.RealVector;
+import org.apache.commons.math3.stat.StatUtils;
+
+public class Vector extends ArrayRealVector {
+	
+	public double dotProduct(Vector v) throws IllegalArgumentException {
+//		this.normalize();
+//		v.normalize();
+		return super.dotProduct(v);
+	}
+
 	private ClusterCenter associatedCluster;
 	
-	public Vector(){
-		
+	public Vector(double[] d){
+		super(d);
 	}
 	
-	public Vector(float[] vectorPoint){
-		this.vectorPoint = vectorPoint;
-	}
-	
-	public Vector(float[] vectorPoint, ClusterCenter associatedCluster){
-		this.vectorPoint = vectorPoint;
-		this.associatedCluster = associatedCluster;
-			
-	}
-	
-	public void initVector(String line) throws NumberFormatException{
+	public static Vector getInitialisedVector(String line) throws NumberFormatException{
 		String[] split = line.split(",");
-		vectorPoint = new float[split.length];
+		double[] vectorPoint;
+		vectorPoint = new double[split.length];
 		for (int i = 0; i < split.length; i++) {
-			vectorPoint[i] = Float.parseFloat(split[i]);
+			vectorPoint[i] = Double.parseDouble(split[i]);
 		}
+		return new Vector(vectorPoint);
 	}
 	
 	public ClusterCenter getAssociatedCluster() {
@@ -33,24 +37,26 @@ public class Vector {
 		this.associatedCluster = associatedCluster;
 	}	
 	
-	public float[] getVectorPoint() {
-		return vectorPoint;
-	}
-
-	public void setVectorPoint(float[] vectorPoint) {
-		this.vectorPoint = vectorPoint;
+	public void normalize(){
+		this.setSubVector(0, StatUtils.normalize(this.getData()));
 	}
 	
-	public Vector vectorAdd(Vector v1, Vector v2){
-		float[] vec1 = v1.getVectorPoint();
-		float[] vec2 = v2.getVectorPoint();
-		assert vec1.length == vec2.length;
-		float[] vecR = new float[vec1.length];
-		for (int i = 0; i < vec2.length; i++) {
-			vecR[i] = vec1[i]+vec2[i];
+	public void negate(){
+		try {
+			this.setSubVector(0, this.map(new UnivariateRealFunction() {
+				public double value(double x) throws FunctionEvaluationException {
+					return -x;
+				}
+			}).getData());
+		} catch (FunctionEvaluationException e) {
+			e.printStackTrace();
 		}
-		return new Vector(vecR);
 	}
+
+	
+	
+
+
 
 		
 }
