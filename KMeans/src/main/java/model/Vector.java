@@ -20,6 +20,10 @@ public class Vector extends ArrayRealVector {
 		super(d);
 	}
 	
+	public Vector(ArrayRealVector arv){
+		super(arv);
+	}
+	
 	public static Vector getInitialisedVector(String line) throws NumberFormatException{
 		String[] split = line.split(",");
 		double[] vectorPoint;

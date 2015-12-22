@@ -13,7 +13,7 @@ public class VectorTest {
 	public void test() {
 		Vector v1 = new Vector(new double[]{1.0,2.0,3.0,4.9,5.1});
 		Vector v2 = new Vector(new double[]{1.0,2.0,3.0,4.9,20});
-		Vector v3 = new Vector(v1.subtract(v2).getData());
+		Vector v3 = new Vector(v1.subtract(v2));
 		assertArrayEquals(new double[]{0, 0, 0, 0, -14.9},v3.getData(),0.1);
 		v1 = new Vector(new double[]{0.5,0.1});
 		v1.normalize();
