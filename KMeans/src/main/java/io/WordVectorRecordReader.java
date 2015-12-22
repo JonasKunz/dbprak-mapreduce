@@ -2,12 +2,15 @@ package io;
 
 import java.io.IOException;
 
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.LineRecordReader;
 import org.apache.hadoop.mapred.RecordReader;
 
 import model.ClusterCenter;
+import model.Vector;
 
-public class WordVectorRecordReader<K,V> implements RecordReader<K,V> {
+public class WordVectorRecordReader implements RecordReader<Text, Vector> {
 
 	private LineRecordReader reader;
 	
@@ -16,33 +19,42 @@ public class WordVectorRecordReader<K,V> implements RecordReader<K,V> {
 	}
 			
 	public void close() throws IOException {
-		// TODO Auto-generated method stub
-		
+		reader.close();
 	}
 
-	public K createKey() {
-		// TODO Auto-generated method stub
-		return null;
+	public Text createKey() {
+		return new Text();
 	}
 
-	public V createValue() {
-		// TODO Auto-generated method stub
-		return null;
+	public Vector createValue() {
+		return new Vector();
 	}
 
 	public long getPos() throws IOException {
-		// TODO Auto-generated method stub
-		return 0;
+		return reader.getPos();
 	}
 
 	public float getProgress() throws IOException {
-		// TODO Auto-generated method stub
-		return 0;
+		return reader.getProgress();
 	}
 
-	public boolean next(K arg0, V arg1) throws IOException {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean next(Text word, Vector vec) throws IOException {
+		LongWritable lineNumber = new LongWritable();
+		Text rawText = new Text();
+		if(!reader.next(lineNumber, rawText)) {
+			return false;
+		} else {
+			String[] splitted = rawText.toString().split(":");		
+			word.set(splitted[0]);
+			
+			String[] vecComponents = splitted[1].split(",");
+			float[] vecData = new float[vecComponents.length];
+			for(int i=0; i<vecComponents.length; i++) {
+				vecData[i] = Float.parseFloat(vecComponents[i]);
+			}
+			vec.setVectorPoint(vecData);
+			return true;
+		}
 	}
 
 }
