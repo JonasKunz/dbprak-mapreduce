@@ -7,14 +7,10 @@ import org.apache.commons.math3.stat.StatUtils;
 
 public class Vector extends ArrayRealVector {
 	
-	public double dotProduct(Vector v) throws IllegalArgumentException {
-//		this.normalize();
-//		v.normalize();
-		return super.dotProduct(v);
+	public double cosineDistance(Vector v) throws IllegalArgumentException {
+		double cosSimilarity = this.dotProduct(v) / (v.getNorm() * this.getNorm());
+		return 1- cosSimilarity;
 	}
-
-	private ClusterCenter associatedCluster;
-	
 
 	public Vector(){
 		super();
@@ -37,13 +33,6 @@ public class Vector extends ArrayRealVector {
 		}
 		return new Vector(vectorPoint);
 	}
-	
-	public ClusterCenter getAssociatedCluster() {
-		return associatedCluster;
-	}
-	public void setAssociatedCluster(ClusterCenter associatedCluster) {
-		this.associatedCluster = associatedCluster;
-	}	
 	
 	public void normalize(){
 		this.setSubVector(0, StatUtils.normalize(this.getData()));
