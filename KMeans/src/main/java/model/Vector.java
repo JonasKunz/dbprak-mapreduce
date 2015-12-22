@@ -3,7 +3,6 @@ package model;
 import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
 import org.apache.commons.math.linear.ArrayRealVector;
-import org.apache.commons.math.linear.RealVector;
 import org.apache.commons.math3.stat.StatUtils;
 
 public class Vector extends ArrayRealVector {
@@ -15,6 +14,11 @@ public class Vector extends ArrayRealVector {
 	}
 
 	private ClusterCenter associatedCluster;
+	
+
+	public Vector(){
+		super();
+	}
 	
 	public Vector(double[] d){
 		super(d);

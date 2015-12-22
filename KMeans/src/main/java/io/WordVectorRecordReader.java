@@ -48,11 +48,11 @@ public class WordVectorRecordReader implements RecordReader<Text, Vector> {
 			word.set(splitted[0]);
 			
 			String[] vecComponents = splitted[1].split(",");
-			float[] vecData = new float[vecComponents.length];
+			double[] vecData = new double[vecComponents.length];
 			for(int i=0; i<vecComponents.length; i++) {
-				vecData[i] = Float.parseFloat(vecComponents[i]);
+				vecData[i] = Double.parseDouble(vecComponents[i]);
 			}
-			vec.setVectorPoint(vecData);
+			vec.setSubVector(0, vecData);
 			return true;
 		}
 	}
