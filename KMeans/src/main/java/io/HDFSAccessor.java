@@ -8,17 +8,34 @@ import java.io.OutputStreamWriter;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+import javax.management.RuntimeErrorException;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
 public class HDFSAccessor {
+	
+
+    FileSystem fs;
+
+	public HDFSAccessor(FileSystem fs) {
+		super();
+		this.fs = fs;
+	}
+	
+	public HDFSAccessor() {
+		super();
+		try {
+			fs = FileSystem.get(new Configuration());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	public void readFile(String path, BiConsumer<Long, String> lineConsumer) {
 		Path pt=new Path(path);
-        FileSystem fs;
 		try {
-			fs = FileSystem.get(new Configuration());
 	        BufferedReader br=new BufferedReader(new InputStreamReader(fs.open(pt)));
 	        String line;
 	        long lineNumber = 1;
@@ -34,9 +51,7 @@ public class HDFSAccessor {
 	
 	public void clearAndWriteFile(String path, Function<Long, String> lineProducer) {
 		Path pt=new Path(path);
-        FileSystem fs;
 		try {
-			fs = FileSystem.get(new Configuration());
 			BufferedWriter bw=new BufferedWriter(new OutputStreamWriter(fs.create(pt,true)));
 			long lineNumber = 1;
 			String line;

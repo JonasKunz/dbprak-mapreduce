@@ -39,6 +39,22 @@ public class ParsingUtil {
 		return arrayData;
 	}
 	
+	public double parseDouble(StringBuffer sb) {
+		String arg = takeArgument(sb);
+		return Double.parseDouble(arg);
+	}
+	
+	public double[] parseDoubleArray(StringBuffer sb, String elementSeparator) {
+		ParsingUtil arrParser =new ParsingUtil(elementSeparator);
+		StringBuffer arg = new StringBuffer(takeArgument(sb));
+		int count = arrParser.getArgumentsCount(arg);
+		double[] arrayData = new double[count];
+		for(int i=0; i<count; i++) {
+			arrayData[i] = arrParser.parseDouble(arg);
+		}
+		return arrayData;
+	}
+	
 	public int getArgumentsCount(StringBuffer arg) {
 		if(arg.length() == 0){
 			return 0;
