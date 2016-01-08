@@ -19,8 +19,8 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 public class KMeans {
 
 	private final String JOB_NAME = "KMeans";
-	private final String input = "";
-	private final String outputPath = "";
+	private final String input = "/usr/local/hadoop/dbprak/public/example.txt";
+	private final String outputPath = "/usr/local/hadoop/dbprak/group2/output1";
 
 	public void kmeans(String[] args) throws Exception {
 

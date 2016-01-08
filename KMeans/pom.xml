@@ -20,7 +20,6 @@
 
 
 		<dependency>
-			<scope>test</scope>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-test</artifactId>
 			<version>1.2.1</version>
@@ -71,7 +70,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>main.KMeans</mainClass>
+							<mainClass>Main</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>
