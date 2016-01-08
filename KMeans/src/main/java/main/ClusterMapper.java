@@ -2,20 +2,27 @@ package main;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.*;
+import org.apache.hadoop.mapreduce.Mapper;
 
-import model.*;
+import model.ClusterCenter;
+import model.Pair;
+import model.Vector;
 
 public class ClusterMapper extends Mapper<Text, Vector, ClusterCenter, Pair<Text,Vector>>{
 
+	public static final String CENTROIDS_FILE_CONFIG_KEY = "CENTROIDS_FILE";
+
 	private List<ClusterCenter> getClustersCenters(Context context) {
-		//TODO
-		return null;
 		
+		Configuration config = context.getConfiguration();
+		String centroidFileUri = config.get(CENTROIDS_FILE_CONFIG_KEY);
+		
+		return ClusterCenter.readClusterCentersFile(config, centroidFileUri);
 	}
-	
-	
+
+
 	@Override
 	protected void map(Text key, Vector value, Context context){
 		//search for the closest center

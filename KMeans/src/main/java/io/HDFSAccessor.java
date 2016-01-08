@@ -32,6 +32,15 @@ public class HDFSAccessor {
 			throw new RuntimeException(e);
 		}
 	}
+	
+	public HDFSAccessor(Configuration config) {
+		super();
+		try {
+			fs = FileSystem.get(config);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	public void readFile(String path, BiConsumer<Long, String> lineConsumer) {
 		Path pt=new Path(path);
