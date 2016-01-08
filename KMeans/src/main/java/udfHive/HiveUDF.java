@@ -1,7 +1,6 @@
 package udfHive;
 
 import java.util.ArrayList;
-
 import org.apache.hadoop.hive.ql.exec.UDF;
 
 public class HiveUDF extends UDF{
@@ -43,6 +42,4 @@ public class HiveUDF extends UDF{
 	public float vecDistance(ArrayList<Float> v1, ArrayList<Float> v2){
 		return vecScalar(v1, v2)/(vecLength(v1)*vecLength(v2));
 	}
-	
-
 }

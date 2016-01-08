@@ -3,36 +3,23 @@ package io;
 import java.io.IOException;
 
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapred.FileInputFormat;
-import org.apache.hadoop.mapred.InputSplit;
-import org.apache.hadoop.mapred.JobConf;
-import org.apache.hadoop.mapred.LineRecordReader;
-import org.apache.hadoop.mapred.RecordReader;
-import org.apache.hadoop.mapred.Reporter;
-import org.apache.hadoop.mapred.TextInputFormat;
+import org.apache.hadoop.mapreduce.InputSplit;
+import org.apache.hadoop.mapreduce.RecordReader;
+import org.apache.hadoop.mapreduce.TaskAttemptContext;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.LineRecordReader;
+import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 
 import model.Vector;
 
 public class WordVectorInputFormat extends FileInputFormat<Text, Vector> {
 
-	private TextInputFormat tp = new TextInputFormat();
-
-	public void configure(JobConf conf) {
-		tp.configure(conf);
-	}
-
-	public RecordReader<Text, Vector> getRecordReader(InputSplit genericSplit, JobConf job, Reporter reporter)
-			throws IOException {
-		LineRecordReader recordReader = (LineRecordReader) tp.getRecordReader(genericSplit, job, reporter);
-		return new WordVectorRecordReader(recordReader);
-	}
-
-	public InputSplit[] getSplits(JobConf arg0, int arg1) throws IOException {
-		return tp.getSplits(arg0, arg1);
-	}
-
-	
-	
-	
-	
+    private TextInputFormat tp = new TextInputFormat();
+    
+    @Override
+    public RecordReader<Text, Vector> createRecordReader(InputSplit arg0, TaskAttemptContext arg1) throws IOException,
+	    InterruptedException {
+	LineRecordReader recordReader = (LineRecordReader) tp.createRecordReader(arg0,arg1);
+	return new WordVectorRecordReader(recordReader);
+    }	
 }

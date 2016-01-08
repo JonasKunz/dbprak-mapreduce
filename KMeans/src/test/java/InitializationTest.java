@@ -20,7 +20,7 @@ import main.Initializer;
 public class InitializationTest {
 
 	String inputFolder = "testData";
-	String outputFolder = "testData\\output";
+	String outputFolder = "testData/output";
 
 	private static FileSystem fs;
 	
@@ -59,12 +59,12 @@ public class InitializationTest {
 	
 	@Test
 	public void testFileAccess() {
-		String inUri = new File(inputFolder+"\\inputWords.txt").getAbsoluteFile().toURI().toString();
-		String outUri = new File(outputFolder+"\\outputCenters.txt").getAbsoluteFile().toURI().toString();
+		String inUri = new File(inputFolder+"/inputWords.txt").getAbsoluteFile().toURI().toString();
+		String outUri = new File(outputFolder+"/outputCenters.txt").getAbsoluteFile().toURI().toString();
 		HDFSAccessor acc = new HDFSAccessor(fs);
 		
 		Initializer init = new Initializer(acc, inUri);
-		init.computeCenters(2, 1, 0, outUri);
+		init.computeCenters(10, 5, 0, outUri);
 		
 		acc.readFile(outUri, (ln,l) -> {
 			System.out.println("center : " + l);

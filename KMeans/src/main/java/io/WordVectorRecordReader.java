@@ -2,59 +2,68 @@ package io;
 
 import java.io.IOException;
 
-import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapred.LineRecordReader;
-import org.apache.hadoop.mapred.RecordReader;
+import org.apache.hadoop.mapreduce.InputSplit;
+import org.apache.hadoop.mapreduce.RecordReader;
+import org.apache.hadoop.mapreduce.TaskAttemptContext;
+import org.apache.hadoop.mapreduce.lib.input.LineRecordReader;
 
-import model.ClusterCenter;
 import model.Vector;
 
-public class WordVectorRecordReader implements RecordReader<Text, Vector> {
+public class WordVectorRecordReader extends RecordReader<Text, Vector> {
 
-	private LineRecordReader reader;
-	
-	public WordVectorRecordReader(LineRecordReader reader){
-		this.reader = reader;
-	}
-			
-	public void close() throws IOException {
-		reader.close();
-	}
+    private LineRecordReader reader;
+    private Text word;
+    private Vector vec;
 
-	public Text createKey() {
-		return new Text();
-	}
+    public WordVectorRecordReader(LineRecordReader reader) {
+	this.reader = reader;
+    }
 
-	public Vector createValue() {
-		return new Vector();
-	}
+    @Override
+    public void close() throws IOException {
+	reader.close();
+    }
 
-	public long getPos() throws IOException {
-		return reader.getPos();
-	}
+    @Override
+    public Text getCurrentKey() throws IOException, InterruptedException {
+	return word;
+    }
 
-	public float getProgress() throws IOException {
-		return reader.getProgress();
-	}
+    @Override
+    public Vector getCurrentValue() throws IOException, InterruptedException {
+	return vec;
+    }
 
-	public boolean next(Text word, Vector vec) throws IOException {
-		LongWritable lineNumber = new LongWritable();
-		Text rawText = new Text();
-		if(!reader.next(lineNumber, rawText)) {
-			return false;
-		} else {
-			String[] splitted = rawText.toString().split(":");		
-			word.set(splitted[0]);
-			
-			String[] vecComponents = splitted[1].split(",");
-			double[] vecData = new double[vecComponents.length];
-			for(int i=0; i<vecComponents.length; i++) {
-				vecData[i] = Double.parseDouble(vecComponents[i]);
-			}
-			vec.setSubVector(0, vecData);
-			return true;
-		}
+    @Override
+    public float getProgress() throws IOException, InterruptedException {
+	return reader.getProgress();
+    }
+
+    @Override
+    public void initialize(InputSplit arg0, TaskAttemptContext arg1) throws IOException, InterruptedException {
+	reader.initialize(arg0, arg1);
+    }
+
+    @Override
+    public boolean nextKeyValue() throws IOException, InterruptedException {
+	Text rawText = new Text();
+	if (!reader.nextKeyValue()) {
+	    word = null;
+	    vec = null;
+	    return false;
+	} else {
+	    String[] splitted = rawText.toString().split(":");
+	    word.set(splitted[0]);
+
+	    String[] vecComponents = splitted[1].split(",");
+	    double[] vecData = new double[vecComponents.length];
+	    for (int i = 0; i < vecComponents.length; i++) {
+		vecData[i] = Double.parseDouble(vecComponents[i]);
+	    }
+	    vec.setSubVector(0, vecData);
+	    return true;
 	}
+    }
 
 }
