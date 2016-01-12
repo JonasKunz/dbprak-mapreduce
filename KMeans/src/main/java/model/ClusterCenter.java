@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.WritableComparable;
 
 import io.HDFSAccessor;
 import io.ParsingUtil;

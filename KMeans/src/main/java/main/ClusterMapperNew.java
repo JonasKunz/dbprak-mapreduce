@@ -10,10 +10,12 @@ import org.apache.hadoop.mapreduce.Mapper;
 
 import io.ParsingUtil;
 import model.ClusterCenter;
+import model.ClusterCenterWritable;
 import model.Pair;
 import model.Vector;
+import model.VectorWritable;
 
-public class ClusterMapperNew extends Mapper<LongWritable, Text, ClusterCenter, Pair<Text,Vector>>{
+public class ClusterMapperNew extends Mapper<LongWritable, Text, ClusterCenterWritable, VectorWritable>{
 
 	private static final String ELEMENT_SEPARATOR = ":";
 	private static final String ARRAY_SEPARATOR = ",";
@@ -51,7 +53,7 @@ public class ClusterMapperNew extends Mapper<LongWritable, Text, ClusterCenter, 
 		}
 		try {
 		    	if(key != null){
-		    	    context.write(closest, new Pair<>(new Text(word), vector));
+		    	    context.write(new ClusterCenterWritable(closest), new VectorWritable(vector));
 		    	}else{
 		    	    System.out.println("Key was null");
 		    	}
