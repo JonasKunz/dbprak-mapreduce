@@ -52,7 +52,17 @@ public class Vector extends ArrayRealVector {
 
 	
 	
-
+	@Override
+	public String toString() {
+		StringBuffer data = new StringBuffer();
+		for(double d : getData()) {
+			if(data.length() != 0) {
+				data.append(',');
+			}
+			data.append(Double.toString(d));
+		}
+		return data.toString();
+	}
 
 
 		
