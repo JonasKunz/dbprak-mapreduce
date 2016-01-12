@@ -6,6 +6,7 @@ import io.HDFSAccessor;
 import io.WordVectorInputFormat;
 import model.ClusterCenter;
 import model.Vector;
+import model.VectorWritable;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -45,6 +46,8 @@ public class KMeans {
 
 			Configuration config = new Configuration();
 			System.out.println("Iteration" + iteration);
+			
+			config.set("mapreduce.textoutputformat.separator", ":");
 			config.set(ClusterMapper.CENTROIDS_FILE_CONFIG_KEY, currentInput);
 			
 			Job job;
@@ -56,7 +59,7 @@ public class KMeans {
 			job.setInputFormatClass(TextInputFormat.class);
 			job.setOutputFormatClass(TextOutputFormat.class);
 			job.setOutputKeyClass(IntWritable.class);
-			job.setOutputValueClass(Vector.class);
+			job.setOutputValueClass(VectorWritable.class);
 			
 			FileInputFormat.setInputPaths(job, new Path(input));			
 			FileOutputFormat.setOutputPath(job, new Path(currentOutput));
