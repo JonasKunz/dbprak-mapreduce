@@ -36,7 +36,11 @@ public class ClusterMapper extends Mapper<Text, Vector, ClusterCenter, Pair<Text
 			}
 		}
 		try {
-			context.write(closest, new Pair<>(key, value));
+		    	if(key != null){
+		    	    context.write(closest, new Pair<>(key, value));
+		    	}else{
+		    	    System.out.println("Key was null");
+		    	}
 		} catch (Exception e) {
 			RuntimeException up = new RuntimeException(e);
 			throw up; 

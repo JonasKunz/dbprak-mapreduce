@@ -1,6 +1,5 @@
 package main;
 
-import java.io.IOException;
 import java.util.List;
 
 import io.HDFSAccessor;
@@ -11,6 +10,7 @@ import model.Vector;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
@@ -19,8 +19,8 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 public class KMeans {
 
 	private final String JOB_NAME = "KMeans";
-	private final String input = "/usr/local/hadoop/dbprak/public/example.txt";
-	private final String outputPath = "/usr/local/hadoop/dbprak/group2/output1";
+	private final String input = "hdfs://hadoopmaster:9000/usr/local/hadoop/dbprak/public/example.txt";
+	private final String outputPath = "hdfs://hadoopmaster:9000/usr/local/hadoop/dbprak/group2/output1";
 
 	public void kmeans(String[] args) throws Exception {
 
@@ -29,8 +29,8 @@ public class KMeans {
 		int rndSeed = Integer.parseInt(args[2]);
 		double threshold = Double.parseDouble(args[3]);
 
-		String currentInput = outputPath + "/tempA";
-		String currentOutput = outputPath + "/tempB";
+		String currentInput = outputPath + "/tempA/";
+		String currentOutput = outputPath + "/tempB/";
 
 		HDFSAccessor hdfs = new HDFSAccessor(new Configuration());
 
@@ -54,12 +54,13 @@ public class KMeans {
 			job.setReducerClass(ClusterReducer.class);
 			job.setInputFormatClass(WordVectorInputFormat.class);
 			job.setOutputFormatClass(TextOutputFormat.class);
-			job.setOutputKeyClass(Integer.class);
+			job.setOutputKeyClass(IntWritable.class);
 			job.setOutputValueClass(Vector.class);
 			
-			FileInputFormat.setInputPaths(job, new Path(input));
+			FileInputFormat.setInputPaths(job, new Path(input));			
 			FileOutputFormat.setOutputPath(job, new Path(currentOutput));
-			
+			System.out.println("File Output set");
+
 			job.waitForCompletion(true);
 			
 			

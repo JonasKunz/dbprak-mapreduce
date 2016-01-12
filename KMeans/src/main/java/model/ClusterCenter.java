@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.io.IntWritable;
 
 import io.HDFSAccessor;
 import io.ParsingUtil;
@@ -14,13 +15,13 @@ public class ClusterCenter extends Vector{
 		super(d);
 	}
 
-	private int number;
+	private IntWritable number;
 
-	public int getNumber() {
+	public IntWritable getNumber() {
 		return number;
 	}
 
-	public void setNumber(int number) {
+	public void setNumber(IntWritable number) {
 		this.number = number;
 	}
 
@@ -31,7 +32,7 @@ public class ClusterCenter extends Vector{
 		HDFSAccessor hdfs = new HDFSAccessor(config);
 		hdfs.readFile(centroidFileUri, (ln,line) -> {
 			StringBuffer lineBuffer = new StringBuffer(line);
-			int id = pu.parseInteger(lineBuffer);
+			IntWritable id = new IntWritable(pu.parseInteger(lineBuffer));
 			double[] vec = pu.parseDoubleArray(lineBuffer, ",");
 			ClusterCenter cc = new ClusterCenter(vec);
 			cc.setNumber(id);

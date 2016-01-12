@@ -2,6 +2,7 @@ package main;
 
 import java.io.IOException;
 
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
@@ -9,7 +10,7 @@ import model.ClusterCenter;
 import model.Pair;
 import model.Vector;
 
-public class ClusterReducer extends Reducer<ClusterCenter, Pair<Text, Vector>, Integer, Vector>{
+public class ClusterReducer extends Reducer<ClusterCenter, Pair<Text, Vector>, IntWritable, Vector>{
 
 	@Override
 	protected void reduce(ClusterCenter cluster, Iterable<Pair<Text, Vector>> words, Context context) throws IOException, InterruptedException {

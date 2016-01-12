@@ -3,6 +3,7 @@ package io;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.function.BiConsumer;
@@ -11,6 +12,7 @@ import java.util.function.Function;
 import javax.management.RuntimeErrorException;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
@@ -45,7 +47,13 @@ public class HDFSAccessor {
 	public void readFile(String path, BiConsumer<Long, String> lineConsumer) {
 		Path pt=new Path(path);
 		try {
-	        BufferedReader br=new BufferedReader(new InputStreamReader(fs.open(pt)));
+		FSDataInputStream inputStream = null;
+		if(fs.exists(pt)){
+		    inputStream= fs.open(pt);
+		}else{
+		    System.out.println("File does not exist");
+		}
+	        BufferedReader br=new BufferedReader(new InputStreamReader(inputStream));
 	        String line;
 	        long lineNumber = 1;
 	        while((line = br.readLine()) != null) {
@@ -76,5 +84,7 @@ public class HDFSAccessor {
 			throw new RuntimeException(e);
 		}
 	}
+	
+
 	
 }
