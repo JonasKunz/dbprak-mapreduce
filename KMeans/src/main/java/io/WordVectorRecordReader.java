@@ -47,12 +47,13 @@ public class WordVectorRecordReader extends RecordReader<Text, Vector> {
 
     @Override
     public boolean nextKeyValue() throws IOException, InterruptedException {
-	Text rawText = new Text();
+	
 	if (!reader.nextKeyValue()) {
 	    word = null;
 	    vec = null;
 	    return false;
 	} else {
+	    Text rawText = reader.getCurrentValue();
 	    String[] splitted = rawText.toString().split(":");
 	    word.set(splitted[0]);
 
@@ -65,5 +66,7 @@ public class WordVectorRecordReader extends RecordReader<Text, Vector> {
 	    return true;
 	}
     }
+    
+    
 
 }

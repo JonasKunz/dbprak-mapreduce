@@ -29,8 +29,8 @@ public class KMeans {
 		int rndSeed = Integer.parseInt(args[2]);
 		double threshold = Double.parseDouble(args[3]);
 
-		String currentInput = outputPath + "/tempA/";
-		String currentOutput = outputPath + "/tempB/";
+		String currentInput = outputPath + "/tempA";
+		String currentOutput = outputPath + "/tempB";
 
 		HDFSAccessor hdfs = new HDFSAccessor(new Configuration());
 
@@ -43,7 +43,7 @@ public class KMeans {
 		while (isdone == false) {
 
 			Configuration config = new Configuration();
-			
+			System.out.println("Iteration" + iteration);
 			config.set(ClusterMapper.CENTROIDS_FILE_CONFIG_KEY, currentInput);
 			
 			Job job;
