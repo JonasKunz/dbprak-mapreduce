@@ -28,7 +28,6 @@ public class ClusterMapperNew extends Mapper<LongWritable, Text, ClusterCenterWr
 		
 		Configuration config = context.getConfiguration();
 		String centroidFileUri = config.get(CENTROIDS_FILE_CONFIG_KEY);
-		
 		return ClusterCenter.readClusterCentersFile(config, centroidFileUri);
 	}
 

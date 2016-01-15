@@ -8,46 +8,57 @@ import org.apache.hadoop.io.Writable;
 
 import io.ParsingUtil;
 
-public class VectorWritable implements Writable{
+public class VectorWritable implements Writable {
 
-	private Vector vector;
-	
-	public VectorWritable() {
-		super();
-	}
-	
-	public VectorWritable(Vector vector) {
-		super();
-		this.vector = vector;
-	}
+    private Vector vector;
 
-	public Vector getVector() {
-		return vector;
-	}
+    public VectorWritable() {
+	super();
+    }
 
-	public void setVector(Vector vector) {
-		this.vector = vector;
-	}
+    public VectorWritable(Vector vector) {
+	super();
+	this.vector = vector;
+    }
 
-	@Override
-	public void write(DataOutput out) throws IOException {
-		StringBuffer data = new StringBuffer();
-		for(double d : vector.getData()) {
-			if(data.length() != 0) {
-				data.append(',');
-			}
-			data.append(Double.toString(d));
-		}
-		out.writeUTF(data.toString());
-	}
+    public Vector getVector() {
+	return vector;
+    }
 
-	@Override
-	public void readFields(DataInput in) throws IOException {
-		ParsingUtil pu = new ParsingUtil(":");
-		StringBuffer data = new StringBuffer(in.readUTF());
-		vector = new Vector(pu.parseDoubleArray(data, ","));
-		
-		
+    public void setVector(Vector vector) {
+	this.vector = vector;
+    }
+
+    @Override
+    public void write(DataOutput out) throws IOException {
+	StringBuffer data = new StringBuffer();
+	for (double d : vector.getData()) {
+	    if (data.length() != 0) {
+		data.append(',');
+	    }
+	    data.append(Double.toString(d));
 	}
+	out.writeUTF(data.toString());
+    }
+
+    @Override
+    public void readFields(DataInput in) throws IOException {
+	ParsingUtil pu = new ParsingUtil(":");
+	StringBuffer data = new StringBuffer(in.readUTF());
+	vector = new Vector(pu.parseDoubleArray(data, ","));
+
+    }
+
+    @Override
+    public String toString() {
+	StringBuffer data = new StringBuffer();
+	for (double d : vector.getData()) {
+	    if (data.length() != 0) {
+		data.append(',');
+	    }
+	    data.append(Double.toString(d));
+	}
+	return data.toString();
+    }
 
 }

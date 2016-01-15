@@ -51,7 +51,7 @@ public class HDFSAccessor {
 		if(fs.exists(pt)){
 		    inputStream= fs.open(pt);
 		}else{
-		    System.out.println("File does not exist");
+		    System.out.println("File does not exist" + path);
 		}
 	        BufferedReader br=new BufferedReader(new InputStreamReader(inputStream));
 	        String line;

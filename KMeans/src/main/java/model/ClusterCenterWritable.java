@@ -43,8 +43,8 @@ public class ClusterCenterWritable implements WritableComparable<ClusterCenterWr
 		for(double d : center.getData()) {
 			if(!first) {
 				data.append(',');
-				first = false;
 			}
+			first = false;
 			data.append(Double.toString(d));
 		}
 		out.writeUTF(data.toString());
@@ -56,7 +56,13 @@ public class ClusterCenterWritable implements WritableComparable<ClusterCenterWr
 		StringBuffer data = new StringBuffer(in.readUTF());
 		
 		int id = pu.parseInteger(data);
-		center = new ClusterCenter(pu.parseDoubleArray(data, ","));
+		String tmp = data.toString();
+		try{
+		    center = new ClusterCenter(pu.parseDoubleArray(data, ","));
+		}catch(NumberFormatException e){
+		    System.out.println(tmp);
+		    throw e;
+		}
 		center.setNumber(new IntWritable(id));
 		
 		
