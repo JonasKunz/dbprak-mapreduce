@@ -25,13 +25,13 @@ public class ClusterReducer extends Reducer<ClusterCenterWritable, VectorWritabl
 			if(sum == null) {
 				sum = normalized;
 			} else {
-				sum.add(normalized);
+				sum = new Vector(sum.add(normalized).getData());
 			}
 		}
 		if(sum == null) {
 			context.write(cluster.getCenter().getNumber(), new VectorWritable(cluster.getCenter()));
 		} else {
-			sum.mapMultiplyToSelf(1.0 / count);
+			sum.normalize();
 			context.write(cluster.getCenter().getNumber(), new VectorWritable(sum));
 		}
 		
