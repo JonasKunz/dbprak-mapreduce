@@ -16,6 +16,7 @@ public class TableLoader {
 	private static String word2VecLocation = "hdfs://hadoopmaster:9000/usr/local/hadoop/dbprak/group2/output1";
 	private static String clusterCenterTableName = "ClusterCenterB";
 	private static String clusterCenterLocation = "hdfs://hadoopmaster:9000/usr/local/hadoop/dbprak/group2/output1/clusterCenter";
+	private static String jarLocation = "hdfs://hadoopmaster:9000/usr/local/hadoop/dbprak/group2/Udf.jar";
 	
 	
 	public static void main(String[] args) {
@@ -83,6 +84,16 @@ public class TableLoader {
 		}
 		System.out.println("All data loaded successfully!");
 		
+		//adding UDFs
+		try {
+			addUDFs();
+		} catch (SQLException e) {
+			System.err.println("Could not add UDFs!");
+			e.printStackTrace();
+			System.exit(1);;
+		}
+		System.out.println("UDFs added successfully.");
+		
 		//disconnecting
 		try {
 			disconnect();
@@ -94,6 +105,35 @@ public class TableLoader {
 		System.out.println("Disconnected succesfully!");
 	}
 	
+	private static void addUDFs() throws SQLException {
+		String sql = "ADD JAR " + jarLocation;
+		statement.execute(sql);
+		sql = "DROP FUNCTION IF EXISTS vecAdd";
+		statement.execute(sql);
+		sql = "CREATE FUNCTION vecAdd AS 'udf.AddVec'";
+		statement.execute(sql);
+		sql = "DROP FUNCTION IF EXISTS vecSub";
+		statement.execute(sql);
+		sql = "CREATE FUNCTION vecSub AS 'udf.SubVec'";
+		statement.execute(sql);
+		sql = "DROP FUNCTION IF EXISTS vecDistance";
+		statement.execute(sql);
+		sql = "CREATE FUNCTION vecDistance AS 'udf.VecDistance'";
+		statement.execute(sql);
+		sql = "DROP FUNCTION IF EXISTS vecLength";
+		statement.execute(sql);
+		sql = "CREATE FUNCTION vecLength AS 'udf.VecLength'";
+		statement.execute(sql);
+		sql = "DROP FUNCTION IF EXISTS vecNegate";
+		statement.execute(sql);
+		sql = "CREATE FUNCTION vecNegate AS 'udf.VecNegate'";
+		statement.execute(sql);
+		sql = "DROP FUNCTION IF EXISTS vecScalar";
+		statement.execute(sql);
+		sql = "CREATE FUNCTION vecScalar AS 'udf.VecScalar'";
+		statement.execute(sql);
+	}
+
 	private static void disconnect() throws SQLException {
 		connection.close();		
 	}
