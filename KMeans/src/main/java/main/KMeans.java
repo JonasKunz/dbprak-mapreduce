@@ -72,19 +72,7 @@ public class KMeans {
 			job.waitForCompletion(true);
 			System.out.println("Job complete");
 			String filename = currentOutput + "/part-r-00000";
-//			if(iteration >= 0 && iteration < 10){
-//			    filename += "0000"+iteration;
-//			}else if (iteration >= 10 && iteration <99){
-//			    filename += "000"+iteration;
-//			}else if (iteration >= 100 && iteration <999){
-//			    filename += "00"+iteration;
-//			}else if (iteration >= 1000 && iteration <9999){
-//			    filename += "0"+iteration;
-//			}else if (iteration >= 10000 && iteration <99999){
-//			    filename += iteration;
-//			}
-			
-//			System.out.println("filename" +filename);
+//			
 			List<ClusterCenter> newCenters = ClusterCenter.readClusterCentersFile(config,filename);
 			System.out.println("Check distance");
 
@@ -110,17 +98,14 @@ public class KMeans {
 			if(FileSystem.get(config).exists(new Path(currentOutput))){
 			    FileSystem.get(config).delete(new Path(currentOutput),true);
 			}
-
-//			if(FileSystem.get(config).delete(new Path(currentOutput),true)){
-//				System.out.println("Delete complete");
-//
-//			}else{
-//				System.out.println("Couldn't delete");
-//
-//			}
-
 		}
-
+		
+		ResultWriter rw = new ResultWriter(hdfs,input);
+		rw.assignCenters(centers, outputPath + "/partitionId=");
+		Configuration config = new Configuration();
+		FileSystem fs = FileSystem.get(config);
+		FileUtil.copy( fs, new Path(currentInput),  fs, new Path(outputPath + "/clusterCenters"), true, true, config);
+		fs.delete(new Path(currentInput), true);
 	}
 
 }
