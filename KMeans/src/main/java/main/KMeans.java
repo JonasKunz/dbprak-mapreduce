@@ -101,7 +101,7 @@ public class KMeans {
 		}
 		
 		ResultWriter rw = new ResultWriter(hdfs,input);
-		rw.assignCenters(centers, outputPath + "/partitionId=");
+		rw.assignCenters(centers, outputPath + "/partitionId=", outputPath+"/wordsClustered");
 		Configuration config = new Configuration();
 		FileSystem fs = FileSystem.get(config);
 		FileUtil.copy( fs, new Path(currentInput),  fs, new Path(outputPath + "/clusterCenters"), true, true, config);
