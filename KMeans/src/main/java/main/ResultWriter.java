@@ -40,13 +40,17 @@ public class ResultWriter {
 				String lineToWrite = null;
 				while (lineToWrite == null && it.hasNext()) {
 					String originalLine = it.next();
-					StringBuffer line = new StringBuffer(originalLine);
-					String word = pu.parseString(line); // parse the word
-					double[] vectorValues = pu.parseDoubleArray(line, ARRAY_SEPARATOR);
-					Vector vector = new Vector(vectorValues);
-					ClusterCenter closest = getClosestCenter(centers, vector);
-					if (closest.equals(center)) {
-						lineToWrite = originalLine;
+					try {
+						StringBuffer line = new StringBuffer(originalLine);
+						String word = pu.parseString(line); // parse the word
+						double[] vectorValues = pu.parseDoubleArray(line, ARRAY_SEPARATOR);
+						Vector vector = new Vector(vectorValues);
+						ClusterCenter closest = getClosestCenter(centers, vector);
+						if (closest.equals(center)) {
+							lineToWrite = originalLine;
+						}
+					} catch(Exception e) {
+						System.out.println("Skipping faulting line (" +e.getMessage()+"): "+originalLine);
 					}
 				}
 				return lineToWrite;
@@ -54,17 +58,20 @@ public class ResultWriter {
 		}
 		Iterator<String> it = hdfs.readFile(inputPath);
 		hdfs.clearAndWriteFile(mergedOutputFile, (lnr) -> {
-			if (it.hasNext()) {
+			while(it.hasNext()) {
 				String originalLine = it.next();
-				StringBuffer line = new StringBuffer(originalLine);
-				String word = pu.parseString(line); // parse the word
-				double[] vectorValues = pu.parseDoubleArray(line, ARRAY_SEPARATOR);
-				Vector vector = new Vector(vectorValues);
-				ClusterCenter closest = getClosestCenter(centers, vector);
-				return closest.getNumber().get()+ELEMENT_SEPARATOR+originalLine;
-			} else {
-				return null;
+				try {
+					StringBuffer line = new StringBuffer(originalLine);
+					String word = pu.parseString(line); // parse the word
+					double[] vectorValues = pu.parseDoubleArray(line, ARRAY_SEPARATOR);
+					Vector vector = new Vector(vectorValues);
+					ClusterCenter closest = getClosestCenter(centers, vector);
+					return closest.getNumber().get()+ELEMENT_SEPARATOR+originalLine;
+				} catch(Exception e) {
+					System.out.println("Skipping faulting line (" +e.getMessage()+"): "+originalLine);
+				}
 			}
+			return null;
 		});
 
 	}

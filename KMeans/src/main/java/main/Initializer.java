@@ -112,8 +112,7 @@ public class Initializer {
 					double[] vector = pu.parseDoubleArray(line, ARRAY_SEPARATOR);
 					result.add(new Vector(vector));
 				} catch(RuntimeException e) {
-					System.out.println("Faulting line: "+l);
-					throw e;
+					System.out.println("Skipping faulting line (" +e.getMessage()+"): "+l);
 				}
 			}
 		}); 

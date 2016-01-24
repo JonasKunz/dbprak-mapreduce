@@ -35,30 +35,30 @@ public class ClusterMapperNew extends Mapper<LongWritable, Text, ClusterCenterWr
 	@Override
 	protected void map(LongWritable key, Text value, Context context){
 		//file format is word:vector
-		StringBuffer line = new StringBuffer(value.toString());
-		String word = pu.parseString(line); //parse the word
-		double[] vectorValues = pu.parseDoubleArray(line, ARRAY_SEPARATOR);
-		Vector vector = new Vector(vectorValues);
-		
-		//search for the closest center
-		ClusterCenter closest = null;
-		double closestDist = Double.MAX_VALUE;
-		for(ClusterCenter cluster : getClustersCenters(context)) {
-			double dist = cluster.cosineDistance(vector);
-			if(dist < closestDist) {
-				closestDist = dist;
-				closest = cluster;
-			}
-		}
+		String originalLine = value.toString();
 		try {
-		    	if(key != null){
-		    	    context.write(new ClusterCenterWritable(closest), new VectorWritable(vector));
-		    	}else{
-		    	    System.out.println("Key was null");
-		    	}
-		} catch (Exception e) {
-			RuntimeException up = new RuntimeException(e);
-			throw up; 
+			StringBuffer line = new StringBuffer(originalLine);
+			String word = pu.parseString(line); //parse the word
+			double[] vectorValues = pu.parseDoubleArray(line, ARRAY_SEPARATOR);
+			Vector vector = new Vector(vectorValues);
+			
+			//search for the closest center
+			ClusterCenter closest = null;
+			double closestDist = Double.MAX_VALUE;
+			for(ClusterCenter cluster : getClustersCenters(context)) {
+				double dist = cluster.cosineDistance(vector);
+				if(dist < closestDist) {
+					closestDist = dist;
+					closest = cluster;
+				}
+			}
+	    	if(key != null){
+	    	    context.write(new ClusterCenterWritable(closest), new VectorWritable(vector));
+	    	}else{
+	    	    System.out.println("Key was null");
+	    	}
+		} catch(Exception e) {
+			System.out.println("Skipping faulting line (" +e.getMessage()+"): "+originalLine);
 		}
 	}
 
