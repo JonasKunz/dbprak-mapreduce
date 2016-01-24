@@ -107,9 +107,14 @@ public class Initializer {
 		hdfs.readFile(inputPath, (ln,l) -> {
 			if(linesToFetch.contains(ln)) {
 				StringBuffer line = new StringBuffer(l);
-				String word = pu.parseString(line);
-				double[] vector = pu.parseDoubleArray(line, ARRAY_SEPARATOR);
-				result.add(new Vector(vector));
+				try{
+					String word = pu.parseString(line);
+					double[] vector = pu.parseDoubleArray(line, ARRAY_SEPARATOR);
+					result.add(new Vector(vector));
+				} catch(RuntimeException e) {
+					System.out.println("Faulting line: "+l);
+					throw e;
+				}
 			}
 		}); 
 		return result;
