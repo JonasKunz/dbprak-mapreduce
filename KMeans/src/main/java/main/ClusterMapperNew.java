@@ -46,6 +46,10 @@ public class ClusterMapperNew extends Mapper<LongWritable, Text, ClusterCenterWr
 			ClusterCenter closest = null;
 			double closestDist = Double.MAX_VALUE;
 			for(ClusterCenter cluster : getClustersCenters(context)) {
+				//early out check: the vector might have been parsed wit ha wrong idmension
+				if(cluster.getDimension() != vector.getDimension()) {
+					return;
+				}
 				double dist = cluster.cosineDistance(vector);
 				if(dist < closestDist) {
 					closestDist = dist;

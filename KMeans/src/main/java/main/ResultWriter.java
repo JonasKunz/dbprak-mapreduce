@@ -45,7 +45,11 @@ public class ResultWriter {
 						String word = pu.parseString(line); // parse the word
 						double[] vectorValues = pu.parseDoubleArray(line, ARRAY_SEPARATOR);
 						Vector vector = new Vector(vectorValues);
+						
 						ClusterCenter closest = getClosestCenter(centers, vector);
+						if(closest == null) {
+							continue;
+						}
 						if (closest.equals(center)) {
 							lineToWrite = originalLine;
 						}
@@ -66,6 +70,9 @@ public class ResultWriter {
 					double[] vectorValues = pu.parseDoubleArray(line, ARRAY_SEPARATOR);
 					Vector vector = new Vector(vectorValues);
 					ClusterCenter closest = getClosestCenter(centers, vector);
+					if(closest == null) {
+						continue;
+					}
 					return closest.getNumber().get()+ELEMENT_SEPARATOR+originalLine;
 				} catch(Exception e) {
 					System.out.println("Skipping faulting line (" +e.getMessage()+"): "+originalLine);
@@ -80,6 +87,10 @@ public class ResultWriter {
 		ClusterCenter closest = null;
 		double closestDist = Double.MAX_VALUE;
 		for (ClusterCenter cluster : centers) {
+			//fix for worngly parsed vector
+			if(vector.getDimension() != cluster.getDimension()) {
+				return null;
+			}
 			double dist = cluster.cosineDistance(vector);
 			if (dist < closestDist) {
 				closestDist = dist;
