@@ -1,5 +1,7 @@
 package main;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -34,50 +36,54 @@ public class ResultWriter {
 
 	public void assignCenters(List<ClusterCenter> centers, String outputPath, String mergedOutputFile) {
 		ParsingUtil pu = new ParsingUtil(ELEMENT_SEPARATOR);
+		
+		BufferedWriter allWordsFile = hdfs.clearAndWriteFile(mergedOutputFile);
+		final Map<Integer, BufferedWriter> partitionFiles = new HashMap<>();
+		final Set<BufferedWriter> usedWriters = new HashSet<>();
+		
 		for (ClusterCenter center : centers) {
-			Iterator<String> it = hdfs.readFile(inputPath);
-			hdfs.clearAndWriteFile(outputPath + center.getNumber().get() + "/words", (lnr) -> {
-				String lineToWrite = null;
-				while (lineToWrite == null && it.hasNext()) {
-					String originalLine = it.next();
-					try {
-						StringBuffer line = new StringBuffer(originalLine);
-						String word = pu.parseString(line); // parse the word
-						double[] vectorValues = pu.parseDoubleArray(line, ARRAY_SEPARATOR);
-						Vector vector = new Vector(vectorValues);
-						
-						ClusterCenter closest = getClosestCenter(centers, vector);
-						if(closest == null) {
-							continue;
-						}
-						if (closest.equals(center)) {
-							lineToWrite = originalLine;
-						}
-					} catch(Exception e) {
-					}
-				}
-				return lineToWrite;
-			});
+			BufferedWriter bw = hdfs.clearAndWriteFile(outputPath + center.getNumber().get() + "/words");
+			partitionFiles.put(center.getNumber().get(), bw);
 		}
-		Iterator<String> it = hdfs.readFile(inputPath);
-		hdfs.clearAndWriteFile(mergedOutputFile, (lnr) -> {
-			while(it.hasNext()) {
-				String originalLine = it.next();
-				try {
-					StringBuffer line = new StringBuffer(originalLine);
-					String word = pu.parseString(line); // parse the word
-					double[] vectorValues = pu.parseDoubleArray(line, ARRAY_SEPARATOR);
-					Vector vector = new Vector(vectorValues);
-					ClusterCenter closest = getClosestCenter(centers, vector);
-					if(closest == null) {
-						continue;
+		
+		hdfs.readFile(inputPath ,(ln,originalLine) -> {
+			try {
+				StringBuffer line = new StringBuffer(originalLine);
+				String word = pu.parseString(line); // parse the word
+				double[] vectorValues = pu.parseDoubleArray(line, ARRAY_SEPARATOR);
+				Vector vector = new Vector(vectorValues);
+				ClusterCenter closest = getClosestCenter(centers, vector);
+				if(closest != null) {
+					if(!usedWriters.contains(allWordsFile)) {
+						usedWriters.add(allWordsFile);
+					} else {
+						allWordsFile.newLine();
 					}
-					return closest.getNumber().get()+ELEMENT_SEPARATOR+originalLine;
-				} catch(Exception e) {
+					allWordsFile.write( closest.getNumber().get()+ELEMENT_SEPARATOR+originalLine);
+					
+					BufferedWriter partitionWriter = partitionFiles.get(closest.getNumber().get());
+					if(!usedWriters.contains(partitionWriter)) {
+						usedWriters.add(partitionWriter);
+					} else {
+						partitionWriter.newLine();
+					}
+					partitionWriter.write(originalLine);
+					
 				}
+			} catch(Exception e) {
+				//System.out.println("Skipping faulting line (" +e.getMessage()+"): "+originalLine);
 			}
-			return null;
 		});
+		
+		try {
+			allWordsFile.close();
+			for(BufferedWriter bw : partitionFiles.values()) {
+				bw.close();
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 

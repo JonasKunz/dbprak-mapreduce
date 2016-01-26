@@ -144,5 +144,15 @@ public class HDFSAccessor {
 			throw new RuntimeException(e);
 		}
 	}
+	
+	public BufferedWriter clearAndWriteFile(String path) {
+		Path pt = new Path(path);
+		try {
+			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fs.create(pt, true)));
+			return bw;
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 }
