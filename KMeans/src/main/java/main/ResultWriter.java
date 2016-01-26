@@ -54,7 +54,6 @@ public class ResultWriter {
 							lineToWrite = originalLine;
 						}
 					} catch(Exception e) {
-						System.out.println("Skipping faulting line (" +e.getMessage()+"): "+originalLine);
 					}
 				}
 				return lineToWrite;
@@ -75,7 +74,6 @@ public class ResultWriter {
 					}
 					return closest.getNumber().get()+ELEMENT_SEPARATOR+originalLine;
 				} catch(Exception e) {
-					System.out.println("Skipping faulting line (" +e.getMessage()+"): "+originalLine);
 				}
 			}
 			return null;

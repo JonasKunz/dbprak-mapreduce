@@ -62,7 +62,7 @@ public class ClusterMapperNew extends Mapper<LongWritable, Text, ClusterCenterWr
 	    	    System.out.println("Key was null");
 	    	}
 		} catch(Exception e) {
-			System.out.println("Skipping faulting line (" +e.getMessage()+"): "+originalLine);
+			
 		}
 	}
 
