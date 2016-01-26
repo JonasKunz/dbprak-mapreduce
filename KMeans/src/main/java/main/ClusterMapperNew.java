@@ -23,12 +23,14 @@ public class ClusterMapperNew extends Mapper<LongWritable, Text, ClusterCenterWr
 	public static final String CENTROIDS_FILE_CONFIG_KEY = "CENTROIDS_FILE";
 	private ParsingUtil pu;
 	
+	private List<ClusterCenter> centers;
+	
 
-	private List<ClusterCenter> getClustersCenters(Context context) {
+	private void readClustersCenters(Context context) {
 		
 		Configuration config = context.getConfiguration();
 		String centroidFileUri = config.get(CENTROIDS_FILE_CONFIG_KEY);
-		return ClusterCenter.readClusterCentersFile(config, centroidFileUri);
+		centers = ClusterCenter.readClusterCentersFile(config, centroidFileUri);
 	}
 
 
@@ -45,7 +47,7 @@ public class ClusterMapperNew extends Mapper<LongWritable, Text, ClusterCenterWr
 			//search for the closest center
 			ClusterCenter closest = null;
 			double closestDist = Double.MAX_VALUE;
-			for(ClusterCenter cluster : getClustersCenters(context)) {
+			for(ClusterCenter cluster : centers) {
 				//early out check: the vector might have been parsed wit ha wrong idmension
 				if(cluster.getDimension() != vector.getDimension()) {
 					return;
@@ -68,8 +70,9 @@ public class ClusterMapperNew extends Mapper<LongWritable, Text, ClusterCenterWr
 
 	@Override
 	protected void setup(Context context) throws IOException, InterruptedException {
-		pu = new ParsingUtil(ELEMENT_SEPARATOR);
 		super.setup(context);
+		pu = new ParsingUtil(ELEMENT_SEPARATOR);
+		readClustersCenters(context);
 	}
 
 	
