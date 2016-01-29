@@ -3,7 +3,6 @@ package main;
 import java.util.List;
 
 import io.HDFSAccessor;
-import io.WordVectorInputFormat;
 import model.ClusterCenter;
 import model.ClusterCenterWritable;
 import model.Vector;
@@ -50,7 +49,7 @@ public class KMeans {
 			System.out.println("Iteration" + iteration);
 			
 			config.set("mapreduce.output.textoutputformat.separator", ":");
-			config.set(ClusterMapper.CENTROIDS_FILE_CONFIG_KEY, currentInput);
+			config.set(ClusterMapperNew.CENTROIDS_FILE_CONFIG_KEY, currentInput);
 			
 			Job job;
 			
