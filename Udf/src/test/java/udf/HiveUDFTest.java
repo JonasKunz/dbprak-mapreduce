@@ -6,14 +6,12 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
-import udf.HiveUDF;
 
 
 public class HiveUDFTest {
 
 	@Test
 	public void test() {
-		HiveUDF udf = new HiveUDF();
 		ArrayList<Double> v1 = new ArrayList<Double>();
 		v1.add((double)1);
 		v1.add((double)2);
